@@ -1,0 +1,13 @@
+{
+    "name": "root/bt-api",
+    "autoload": {
+        "psr-4": {
+            "Root\\BtApi\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "ext-json": "*"
+    }
+}
