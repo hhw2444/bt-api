@@ -169,6 +169,11 @@ class BTApi implements BTApiInterface
         return $data_response_result['status'] ?? false;
     }
 
+    public function getSign(): array
+    {
+        return $this->sign();
+    }
+
 
     /**
      * 创建站点

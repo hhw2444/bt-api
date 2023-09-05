@@ -72,6 +72,15 @@ class Test{
         return $service->removeSiteTypes(id: 1);
     }
 
+    public function getSign()
+    {
+        $service = (new BTApi(
+            base_uri: 'https://192.168.56.57:41069',
+            key: 'nCUvkCbNgnUVkI0vDR0a4ldhEefBlaz4'
+        ));
+        return $service->getSign();
+    }
+
 
     /**
      * @return array[
