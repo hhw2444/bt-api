@@ -1,5 +1,5 @@
 <?php
-namespace Root\BtApi;
+namespace bt\api;
 
 use Exception;
 use GuzzleHttp\Client;

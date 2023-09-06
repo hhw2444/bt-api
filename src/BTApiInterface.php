@@ -1,5 +1,5 @@
 <?php
-namespace Root\BtApi;
+namespace bt\api;
 interface BTApiInterface
 {
     /**

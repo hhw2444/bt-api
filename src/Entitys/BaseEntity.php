@@ -1,5 +1,5 @@
 <?php
-namespace Root\BtApi\Entitys;
+namespace bt\api\Entitys;
 
 class BaseEntity
 {

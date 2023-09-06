@@ -2,7 +2,7 @@
     "name": "hhw2444/bt-api",
     "autoload": {
         "psr-4": {
-            "Root\\BtApi\\": "src/"
+            "bt\\api\\": "src/"
         }
     },
     "require": {

@@ -1,6 +1,5 @@
 <?php
-
-namespace Root\BtApi\Entitys;
+namespace bt\api\Entitys;
 
 class SiteEntity extends BaseEntity
 {

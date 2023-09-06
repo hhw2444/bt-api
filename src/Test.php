@@ -1,5 +1,5 @@
 <?php
-namespace Root\BtApi;
+namespace bt\api;
 use GuzzleHttp\Exception\GuzzleException;
 
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
