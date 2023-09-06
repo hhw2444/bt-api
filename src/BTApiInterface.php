@@ -40,4 +40,14 @@ interface BTApiInterface
      */
     public function removeSiteTypes(int $id): bool;
 
+    /**
+     * 上传并解压文件到指定目录
+     * @param string $file_name             文件名
+     * @param string $original_path         原文件目录（不带文件名）
+     * @param int $size                     文件大小
+     * @param string $file_type             文件类型
+     * @param string $dfile                 要解压到哪个目录下（只需要填最后的目录例如：想保存到/www/wwwroot/oyvro9.zyx268.com/xxxx  则只需要填 xxxx）
+     * @return bool
+     */
+    public function uploadAndUnzip(string $file_name, string $original_path, int $size, string $file_type, string $dfile): bool;
 }

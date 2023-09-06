@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Root\BtApi\Entitys\SiteEntity;
 
-class BTApi //implements BTApiInterface
+class BTApi implements BTApiInterface
 {
     protected string $base_uri;
 
@@ -540,10 +540,10 @@ class BTApi //implements BTApiInterface
     /**
      * 检测上传文件是否存在
      * @param string $file_name 要检测的文件名
-     * @return $this
+     * @return array
      * @throws GuzzleException
      */
-    public function uploadFileExists(string $file_name): static
+    public function uploadFileExists(string $file_name): array
     {
         if ($this->is_init === false) {
             throw new Exception(message: '服务未初始化', code: 100081);
@@ -579,20 +579,20 @@ class BTApi //implements BTApiInterface
             $message = $data_response_result['msg'] ?? '未知错误';
             throw new Exception(message: $message, code: 100083);
         }
-        return $this;
+        return $data_response_result;
     }
 
 
     /**
      * 上传文件
      * @param string $f_name 要上传的文件名
-     * @param int $original_path 原文件目录（不带文件名）
+     * @param string $original_path 原文件目录（不带文件名）
      * @param int $f_size 要上传的文件大小
      * @param int $f_start 上传起始值（默认0）
-     * @return $this
+     * @return array
      * @throws GuzzleException
      */
-    public function upload(string $f_name, int $original_path, int $f_size, int $f_start = 0): static
+    public function uploadFile(string $f_name, string $original_path, int $f_size, int $f_start = 0): array
     {
         if ($this->is_init === false) {
             throw new Exception(message: '服务未初始化', code: 100091);
@@ -636,7 +636,7 @@ class BTApi //implements BTApiInterface
             $message = $data_response_result['msg'] ?? '未知错误';
             throw new Exception(message: $message, code: 100093);
         }
-        return $this;
+        return $data_response_result;
     }
 
 
@@ -647,10 +647,10 @@ class BTApi //implements BTApiInterface
      * @param string $type 压缩包类型
      * @param string $coding 编码默认（UTF-8、GBK）
      * @param string $password 解压密码
-     * @return $this
+     * @return array
      * @throws GuzzleException
      */
-    public function unZip(string $sfile, string $dfile, string $type, string $coding = 'UTF-8', string $password = ''): static
+    public function unZip(string $sfile, string $dfile, string $type, string $coding = 'UTF-8', string $password = ''): array
     {
         if ($this->is_init === false) {
             throw new Exception(message: '服务未初始化', code: 100081);
@@ -658,9 +658,13 @@ class BTApi //implements BTApiInterface
         if (empty($this->domain)) {
             throw new Exception(message: '站点未初始化', code: 100082);
         }
+        $d_file = "/www/wwwroot/$this->domain";
+        if (!empty($dfile)) {
+            $d_file = "/www/wwwroot/$this->domain/$dfile";
+        }
         $form_data = [
-            'sfile' => $sfile,
-            'dfile' => $dfile,
+            'sfile' => "/www/wwwroot/$this->domain/$sfile",
+            'dfile' => $d_file,
             'type' => $type,
             'coding' => $coding,
             'password' => $password,
@@ -689,6 +693,23 @@ class BTApi //implements BTApiInterface
             $message = $data_response_result['msg'] ?? '未知错误';
             throw new Exception(message: $message, code: 100083);
         }
-        return $this;
+        return $data_response_result;
+    }
+
+    /**
+     * 上传并解压文件到指定目录
+     * @param string $file_name             文件名
+     * @param string $original_path         原文件目录（不带文件名）
+     * @param int $size                     文件大小
+     * @param string $file_type             文件类型
+     * @param string $dfile                 要解压到哪个目录下（只需要填最后的目录例如：想保存到/www/wwwroot/oyvro9.zyx268.com/xxxx  则只需要填 xxxx）
+     * @return bool
+     * @throws GuzzleException
+     */
+    public function uploadAndUnzip(string $file_name, string $original_path, int $size, string $file_type, string $dfile): bool
+    {
+        $this->uploadFile(f_name: $file_name,original_path: $original_path, f_size: $size,f_start: 0);
+        $this->unZip(sfile: $file_name,dfile: $dfile,type: $file_type, coding: 'UTF-8');
+        return true;
     }
 }
