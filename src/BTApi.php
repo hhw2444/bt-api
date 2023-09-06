@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Root\BtApi\Entitys\SiteEntity;
 
-class BTApi implements BTApiInterface
+class BTApi //implements BTApiInterface
 {
     protected string $base_uri;
 
@@ -537,4 +537,158 @@ class BTApi implements BTApiInterface
         return $value;
     }
 
+    /**
+     * 检测上传文件是否存在
+     * @param string $file_name 要检测的文件名
+     * @return $this
+     * @throws GuzzleException
+     */
+    public function uploadFileExists(string $file_name): static
+    {
+        if ($this->is_init === false) {
+            throw new Exception(message: '服务未初始化', code: 100081);
+        }
+        if (empty($this->domain)) {
+            throw new Exception(message: '站点未初始化', code: 100082);
+        }
+        $filename = "/www/wwwroot/{$this->domain}/{$file_name}";
+        $form_data = [
+            'filename' => $filename,
+        ];
+        $sign = $this->sign();
+        $form_data = array_merge($form_data, $sign);
+        $send_data = [];
+        foreach ($form_data as $key => $datum) {
+            $send_data[] = [
+                'name' => $key,
+                'contents' => $datum
+            ];
+        }
+        $client = new Client([
+            RequestOptions::VERIFY => false,
+        ]);
+        $options = [
+            'base_uri' => "$this->base_uri/files?action=upload_file_exists",
+            RequestOptions::MULTIPART => $send_data,
+        ];
+        $response = $client->request('POST', '', $options);
+        $json_response_result = $response->getBody()->getContents();
+        $data_response_result = json_decode($json_response_result, true);
+        $check = $data_response_result['status'] ?? false;
+        if ($check === false) {
+            $message = $data_response_result['msg'] ?? '未知错误';
+            throw new Exception(message: $message, code: 100083);
+        }
+        return $this;
+    }
+
+
+    /**
+     * 上传文件
+     * @param string $f_name 要上传的文件名
+     * @param int $original_path 原文件目录（不带文件名）
+     * @param int $f_size 要上传的文件大小
+     * @param int $f_start 上传起始值（默认0）
+     * @return $this
+     * @throws GuzzleException
+     */
+    public function upload(string $f_name, int $original_path, int $f_size, int $f_start = 0): static
+    {
+        if ($this->is_init === false) {
+            throw new Exception(message: '服务未初始化', code: 100091);
+        }
+        if (empty($this->domain)) {
+            throw new Exception(message: '站点未初始化', code: 100092);
+        }
+        $f_path = "/www/wwwroot/{$this->domain}/";
+        $form_data = [
+            'f_name' => $f_name,
+            'f_size' => $f_size,
+            'f_path' => $f_path,
+            'f_start' => $f_start
+        ];
+        $sign = $this->sign();
+        $form_data = array_merge($form_data, $sign);
+        $send_data = [];
+        foreach ($form_data as $key => $datum) {
+            $send_data[] = [
+                'name' => $key,
+                'contents' => $datum
+            ];
+        }
+        $send_data[] = [
+            'name' => 'blob',
+            'contents' => file_get_contents("$original_path/$f_name"),
+            'filename' => $f_name
+        ];
+        $client = new Client([
+            RequestOptions::VERIFY => false,
+        ]);
+        $options = [
+            'base_uri' => "$this->base_uri/files?action=upload",
+            RequestOptions::MULTIPART => $send_data,
+        ];
+        $response = $client->request('POST', '', $options);
+        $json_response_result = $response->getBody()->getContents();
+        $data_response_result = json_decode($json_response_result, true);
+        $check = $data_response_result['status'] ?? false;
+        if ($check === false) {
+            $message = $data_response_result['msg'] ?? '未知错误';
+            throw new Exception(message: $message, code: 100093);
+        }
+        return $this;
+    }
+
+
+    /**
+     * 解压文件
+     * @param string $sfile 压缩包文件
+     * @param string $dfile 解压到
+     * @param string $type 压缩包类型
+     * @param string $coding 编码默认（UTF-8、GBK）
+     * @param string $password 解压密码
+     * @return $this
+     * @throws GuzzleException
+     */
+    public function unZip(string $sfile, string $dfile, string $type, string $coding = 'UTF-8', string $password = ''): static
+    {
+        if ($this->is_init === false) {
+            throw new Exception(message: '服务未初始化', code: 100081);
+        }
+        if (empty($this->domain)) {
+            throw new Exception(message: '站点未初始化', code: 100082);
+        }
+        $form_data = [
+            'sfile' => $sfile,
+            'dfile' => $dfile,
+            'type' => $type,
+            'coding' => $coding,
+            'password' => $password,
+        ];
+        $sign = $this->sign();
+        $form_data = array_merge($form_data, $sign);
+        $send_data = [];
+        foreach ($form_data as $key => $datum) {
+            $send_data[] = [
+                'name' => $key,
+                'contents' => $datum
+            ];
+        }
+        $client = new Client([
+            RequestOptions::VERIFY => false,
+        ]);
+        $options = [
+            'base_uri' => "$this->base_uri/files?action=UnZip",
+            RequestOptions::MULTIPART => $send_data,
+        ];
+        $response = $client->request('POST', '', $options);
+        $json_response_result = $response->getBody()->getContents();
+        $data_response_result = json_decode($json_response_result, true);
+        $check = $data_response_result['status'] ?? false;
+        if ($check === false) {
+            $message = $data_response_result['msg'] ?? '未知错误';
+            throw new Exception(message: $message, code: 100083);
+        }
+        return $this;
+    }
 }

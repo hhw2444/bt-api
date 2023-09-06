@@ -9,5 +9,10 @@
         "php": ">=8.0",
         "guzzlehttp/guzzle": "^7.0",
         "ext-json": "*"
+    },
+    "config": {
+        "platform": {
+            "php": "8.0.2"
+        }
     }
 }

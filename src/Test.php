@@ -3,8 +3,9 @@ namespace Root\BtApi;
 use GuzzleHttp\Exception\GuzzleException;
 
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
-class Test{
+include BASE_PATH . '/vendor/autoload.php';
 
+class Test{
     /**
      * @throws GuzzleException
      */
@@ -72,6 +73,7 @@ class Test{
         return $service->removeSiteTypes(id: 1);
     }
 
+    /** 获取签名 */
     public function getSign()
     {
         $service = (new BTApi(
@@ -79,6 +81,19 @@ class Test{
             key: 'nCUvkCbNgnUVkI0vDR0a4ldhEefBlaz4'
         ));
         return $service->getSign();
+    }
+
+    public function uploadFileExists()
+    {
+        $service = (new BTApi(
+            base_uri: 'https://192.168.56.57:41069',
+            key: 'nCUvkCbNgnUVkI0vDR0a4ldhEefBlaz4'
+        ));
+
+        $service->init([
+            'domain' => 'oyvro9.zyx268.com',
+        ])->uploadFileExists('签名_验签_加密_解密工具.zip');
+        return true;
     }
 
 
@@ -192,3 +207,5 @@ class Test{
         return $site_list;
     }
 }
+$a = new Test();
+var_dump($a->uploadFileExists());
